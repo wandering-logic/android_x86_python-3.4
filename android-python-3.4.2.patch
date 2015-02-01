@@ -621,7 +621,7 @@ diff -ruN a/Modules/_localemodule.c b/Modules/_localemodule.c
 + *
 + ***************************************************************/
 +
-+#if defined(ENABLE_ANDROID_HACKS)
++#if defined(__ANDROID__)
 +
 +
 +/************************************************************
@@ -800,7 +800,7 @@ diff -ruN a/Modules/_localemodule.c b/Modules/_localemodule.c
 +  "","","","","","","","" // a few extras just for padding
 +};
 +
-+#endif /* ENABLE_ANDROID_HACKS */
++#endif /* __ANDROID__ */
 +
 +
 +
@@ -861,7 +861,7 @@ diff -ruN a/Modules/_localemodule.c b/Modules/_localemodule.c
 + * SUCH DAMAGE.
 + */
 +
-+#if defined(ENABLE_ANDROID_HACKS)
++#if defined(__ANDROID__)
 +
 +/****************************************************************
 + *
@@ -1293,7 +1293,7 @@ diff -ruN a/Modules/_localemodule.c b/Modules/_localemodule.c
 +  return (wcsnrtombs(s, &pwcsp, __SIZE_MAX__, n, &mbs));
 +}
 +
-+#endif /* ENABLE_ANDROID_HACKS */
++#endif /* __ANDROID__ */
 +
  /*
  Local variables:
@@ -1343,7 +1343,7 @@ diff -ruN a/Modules/posixmodule.c b/Modules/posixmodule.c
 +        char *buf,
 +        size_t len)
 +{
-+#if defined(ENABLE_ANDROID_HACKS)
++#if defined(__ANDROID__)
 +  const char cs_path[] = "/system/bin:/system/xbin";
 +#else
 +  /* this should work on most legacy Unices (Solaris and HPUX use

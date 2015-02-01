@@ -43,41 +43,143 @@ version of the same Python you are trying to compile for Android.
 
 ## PATCH
 
-The patch included in this directory is a combination of the following:
+The [`android-python-3.4.2.patch`](https://github.com/wandering-logic/android_x86_python-3.4/blob/master/android-python-3.4.2.patch) included in this directory is a combination of the following:
 
-* http://bugs.python.org/file37930/pw_gecos-field-workaround-with-config_ac-mods.patch from issue 20306.
-* http://bugs.python.org/file37042/time_select_audioop_ctypes_test_link_with_libm.patch from issue 21668.
+* http://bugs.python.org/file37930/pw_gecos-field-workaround-with-config_ac-mods.patch
+  from issue 20306.
+
+*  http://bugs.python.org/file37042/time_select_audioop_ctypes_test_link_with_libm.patch
+  from issue 21668.
+
 * http://bugs.python.org/file27898/issue16353.diff from issue 16353.
-* http://bugs.python.org/file37139/popen-no-hardcode-bin-sh.patch from issue 16255.
-* A variety of patches to attack the issues with locales/langinfo and wide chars described in issues 22747 and 20305.
+
+* http://bugs.python.org/file37139/popen-no-hardcode-bin-sh.patch from
+  issue 16255.
+
+* A variety of patches to attack the issues with locales/langinfo and
+  wide chars described in issues 22747 and 20305.
 
 Additionally if you are trying to get Python-3.5 working then you'll
 also need to apply:
 
-* http://bugs.python.org/file36902/makefile-regen-fix.patch from Issue22625.
+* http://bugs.python.org/file36902/makefile-regen-fix.patch from
+  Issue22625.  (This fixes a bug with cross compilation that was
+  introduced after Python 3.4.2 released.)
 
 
-So download the patch and apply it as follows:
+So [download
+`android-python-3.4.2.patch`](https://github.com/wandering-logic/android_x86_python-3.4/blob/master/android-python-3.4.2.patch) into the source directory
+and apply it as follows:
 
-* `cd Python-3.4.2`
-* `patch -p1 < <path/to/the/patch>`
+* `patch -p1 < android-python-3.4.2.patch`
+* `autoheader`
+* `autoconf`
+
+(The `autoheader` and `autoconf` commands rebuild the `pyconfig.h.in`
+file and the `configure` script.  This is necessary because the patch
+modifies `configure.ac`.  You get these by installing the `autoconf`
+package.  `apt-get install autoconf` on Ubuntu/Debian, `yum install
+autoconf` on CentOS/Fedora/Red Hat).
 
 ## CONFIGURE
 
+In the directory that _contains_ the `Python-3.4.2` source tree do the
+following:
+
 1. `mkdir build-for-android`
 2. `cd build-for-android`
-3.  `CPPFLAGS="-I/absolute/path/to/../Python-3.4.2/FIXLOCALE -DENABLE_ANDROID_HACKS" ../Python-3.4.2/configure --enable-shared --prefix=/absolute/path/to/install/directory --build=x86_64-linux-gnu --host=i686-linux-android --disable-ipv6 ac_cv_file__dev_ptmx=no ac_cv_file__dev_ptc=no ac_cv_little_endian_double=yes --without-ensurepip`
+
+3. `CPPFLAGS=-I/absolute/path/to/../Python-3.4.2/FIXLOCALE
+   ../Python-3.4.2/configure --enable-shared
+   --prefix=/absolute/path/to/install/directory
+   --build=x86_64-linux-gnu --host=i686-linux-android --disable-ipv6
+   ac_cv_file__dev_ptmx=no ac_cv_file__dev_ptc=no
+   ac_cv_little_endian_double=yes --without-ensurepip`
+
+(Explanation:
+
+* `CPPFLAGS` sets the include path to some .h files needed by the
+  patch.
+
+* `../Python-3.4.2/configure` is the script you're running.
+
+* `--enable-shared` tells `configure` you want to use shared libraries
+  rather than static linking.
+
+* `--prefix` is the path where the installation files will be placed
+  on your _build_ machine.  If you have root access on the build
+  machine then you probably want this to be something like
+  `/data/python-3.4.2`.  (In which case you should `sudo mkdir /data`
+  and `sudo chmod go+rwx /data`.)
+
+* `--build` is the system you're building on (usually
+  `x86_64-linux-gnu`).
+
+* `--host` is the Android system you're targeting.  I've got
+  `i686-linux-android`, but if you're targeting an Arm based
+  phone/tablet then this needs to be something like
+  `arm-linux-android`.
+
+* `--disable-ipv6` is because I couldn't get the ipv6 support to compile.
+
+* `ac_cv_file__dev_ptmx` and `ac_cv_file__dev_ptc` are to turn off
+  some other feature that wouldn't properly cross compile.
+
+* `ac_cv_little_endian_double=yes` is necessary on Android x86.  I
+  don't know about Arm.  I'd start without it, and add it if any of
+  the floating point unit tests are failing.
+
+* `--without-ensure-pip` turns off some test that always fails if
+  you're cross compiling.
 
 ## PATCH SOME MORE
-4. download the patch `after-config.patch`.
+
+4. download the patch `after-config.patch` into the
+   `build-for-android` directory.
+
 5. In the `build-for-android` directory run `patch -p1 < after-config.patch`.
 
+(This patch is a complete hack to deal with some more
+cross-compilation bugs which I haven't had time to make real patches
+for.)
+
 ## BUILD
-6. make && make install
+6. `make && make install`
+
+There may be some warnings, but there shouldn't be any errors.
+
+## COPY TO ANDROID
+
+How you've got your Android test box connected may be different than
+mine.  I have the Android test box connected on my local intranet,
+getting an IP address from the local DHCP server.
+
+* `cd \data`
+* `tar --bzip2 --create --file=py.tar.bz2 python-3.4.2/`
+* `adb connect <ip.address.of.android.box>`
+* `adb push py.tar.bz2 /data/`
 
 ## TEST
 
-Run `python3 -m test -x test_ctypes test_threading`
+Now get a shell running on the Android machine.  You can do this from
+a developer-enabled Android phone/tablet by running the `shell`
+program.  I prefer to do it by running `adb shell` from my Linux
+machine (where I have a much better keyboard and monitor.)
+
+At the Android shell prompt:
+
+* `PATH=/system/xbin/busybox:$PATH:/data/python-3.4.2/bin`
+* `LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/data/python-3.4.2/lib`
+* `cd /data/`
+* `tar xf py.tar.bz2`
+
+The `LD_LIBRARY_PATH` setting actually isn't required if you did your
+build into `--prefix=/data/python-3.4.2`, but is required otherwise.
+
+To see whether the most basic stuff is working type `python3` to bring
+up the interactive Python prompt.  Once that is good then run `python3
+-m test -x test_ctypes test_threading`.  (`test_ctypes` and
+`test_threading` are failing catastrophically at the moment.)
 
 This should take about 10 minutes and end with something like the
 following:
@@ -100,3 +202,8 @@ following:
     test_unicode_file test_urllib2net test_urllibnet test_wait4
     test_winreg test_winsound test_xmlrpc_net test_zipfile64
 ```
+
+If you have any ideas about why the failing tests are failing we'd
+love to hear from you!
+
+
