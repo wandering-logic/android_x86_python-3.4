@@ -185,12 +185,12 @@ This should take about 10 minutes and end with something like the
 following:
 
 ```
-328 tests OK.
-20 tests failed:
+327 tests OK.
+21 tests failed:
     test_asyncio test_bytes test_capi test_concurrent_futures
-    test_datetime test_distutils test_faulthandler test_inspect
-    test_io test_mmap test_multiprocessing_main_handling test_os
-    test_posix test_posixpath test_pwd test_shutil test_socket
+    test_datetime test_distutils test_faulthandler test_fork1
+    test_inspect test_io test_mmap test_multiprocessing_main_handling
+    test_os test_posix test_posixpath test_pwd test_shutil test_socket
     test_subprocess test_sys test_unicode
 38 tests skipped:
     test_bz2 test_crypt test_curses test_dbm_gnu test_dbm_ndbm
