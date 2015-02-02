@@ -43,7 +43,7 @@ version of the same Python you are trying to compile for Android.
 
 ## PATCH
 
-The [`android-python-3.4.2.patch`](https://github.com/wandering-logic/android_x86_python-3.4/blob/master/android-python-3.4.2.patch) included in this directory is a combination of the following:
+The [`android-python-3.4.2.patch`](https://raw.githubusercontent.com/wandering-logic/android_x86_python-3.4/master/android-python-3.4.2.patch) included in this directory is a combination of the following:
 
 * http://bugs.python.org/file37930/pw_gecos-field-workaround-with-config_ac-mods.patch
   from issue 20306.
@@ -134,7 +134,7 @@ following:
 
 ## PATCH SOME MORE
 
-4. download the patch `after-config.patch` into the
+4. download the patch [`after-config.patch`](https://raw.githubusercontent.com/wandering-logic/android_x86_python-3.4/master/after-config.patch) into the
    `build-for-android` directory.
 
 5. In the `build-for-android` directory run `patch -p1 < after-config.patch`.
