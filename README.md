@@ -15,10 +15,15 @@ Any Linux with glibc 2.7 or later should work (Debian 5+, Ubuntu
 8.04+, SLES 11+, Fedora 8+, RHEL 6+, Centos 6+), but I haven’t tested
 with anything other than Ubuntu 14.04.
 
-I have Android SDK and Android NDK installed.  NDK revision 9+.  Build
+I have Android SDK and Android NDK installed.  NDK revision 9 or 10d.  Build
 the standalone toolchain for Android NDK by running
 `make-standalone-toolchain.sh` with the appropriate args as described
-at: http://www.kandroid.org/ndk/docs/STANDALONE-TOOLCHAIN.html.
+at: http://www.kandroid.org/ndk/docs/STANDALONE-TOOLCHAIN.html.  For example,
+
+    $ ./android-ndk-r10d-linux-x86_64.bin
+    $ cd android-ndk-r10d
+    $ build/tools/make-standalone-toolchain.sh  --platform=android-19 --arch=x86 --toolchain=x86-4.9 --install-dir=/where/you/install/crosscompilers/i686-linux-android
+    # (or for Arm you might choose: build/tools/make-standalone-toolchain.sh  --platform=android-19 --arch=arm --toolchain=arm-linux-androideabi-4.9 --install-dir=/where/you/install/crosscompilers/arm-linux-android)
 
 The `bin/` subdir of the standalone toolchain should be on your path.
 The Android sdk `adb` tool should be on your path.  (This is usually
